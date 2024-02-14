@@ -4,7 +4,7 @@ const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
 const DEFAULT_IMG = 'https://tinyurl.com/tv-missing';
-const API_URL = "https://api.tvmaze.com/search/shows?";
+const API_URL = "https://api.tvmaze.com";
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -15,7 +15,7 @@ const API_URL = "https://api.tvmaze.com/search/shows?";
 
 async function getShowsByTerm(searchTerm) {
   const qs = new URLSearchParams({ q: searchTerm });
-  const response = await fetch(`${API_URL}${qs}`);
+  const response = await fetch(`${API_URL}/search/shows?${qs}`);
   const rawShowData = await response.json();
 
   // Transforms each element of rawShowData to be formatted correctly
@@ -84,7 +84,21 @@ $searchForm.on("submit", async function handleSearchForm(evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
+ async function getEpisodesOfShow(id) {
+  const response = await fetch(`${API_URL}/shows/${id}/episodes`);
+  const rawEpisodeData = await response.json();
+
+  // Transforms each element of rawEpisodeData to be formatted correctly
+  return rawEpisodeData.map(data => {
+    return {
+      id: data.id,
+      name: data.name,
+      season: data.season,
+      number: data.number
+    };
+  });
+
+ }
 
 /** Write a clear docstring for this function... */
 
