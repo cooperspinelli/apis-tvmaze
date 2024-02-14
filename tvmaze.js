@@ -2,6 +2,7 @@
 
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
+const $epidsodelist = $('#episodesList');
 const $searchForm = $("#searchForm");
 const DEFAULT_IMG = 'https://tinyurl.com/tv-missing';
 const API_URL = "https://api.tvmaze.com";
@@ -84,7 +85,7 @@ $searchForm.on("submit", async function handleSearchForm(evt) {
  *      { id, name, season, number }
  */
 
- async function getEpisodesOfShow(id) {
+async function getEpisodesOfShow(id) {
   const response = await fetch(`${API_URL}/shows/${id}/episodes`);
   const rawEpisodeData = await response.json();
 
@@ -98,10 +99,21 @@ $searchForm.on("submit", async function handleSearchForm(evt) {
     };
   });
 
- }
+}
 
 /** Write a clear docstring for this function... */
-
+//<li>Pilot (season 1, number 1)</li>
 // function displayEpisodes(episodes) { }
+function displayEpisodes(episodes) {
+  $episodesArea.show();
+  $epidsodelist.empty();
+  for (let episode of episodes) {
+    const $episode = $(`<li>${episode.name}, (season ${episode.season}, number ${episode.number})</li>}`);
+    $epidsodelist.append($episode);
+  }
+}
 
-// add other functions that will be useful / match our structure & design
+
+
+
+// add other functions that will be useful / match our structure & design;
