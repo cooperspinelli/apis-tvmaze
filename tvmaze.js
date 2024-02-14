@@ -101,11 +101,12 @@ async function getEpisodesOfShow(id) {
 
 }
 
-/** Write a clear docstring for this function... */
-//<li>Pilot (season 1, number 1)</li>
-// function displayEpisodes(episodes) { }
+/** Given list of episodes, create markup for each and append to DOM.
+ *
+ * An episode is {id, name, season, number}
+ * */
+
 function displayEpisodes(episodes) {
-  $episodesArea.show();
   $epidsodelist.empty();
   for (let episode of episodes) {
     const $episode = $(`<li>${episode.name}, (season ${episode.season}, number ${episode.number})</li>}`);
@@ -114,6 +115,22 @@ function displayEpisodes(episodes) {
 }
 
 
+/** Takes in show ID and
+ * shows episodes area, gets episodes from API, and displays.
+ */
 
+async function getEpisodesAndDisplay(showID) {
+  const episodes = await getEpisodesOfShow(showID);
+  $episodesArea.show();
+  displayEpisodes(episodes);
+}
 
-// add other functions that will be useful / match our structure & design;
+/** Handles button click event, gets show id from parent and
+ * calls getEpisodesAndDisplay with that show id as a parameter
+ */
+async function handleClick(evt) {
+  const $parentShow = $(evt.target).closest(".Show");
+  await getEpisodesAndDisplay($parentShow.data("show-id"));
+}
+
+$showsList.on("click", "button", handleClick);
