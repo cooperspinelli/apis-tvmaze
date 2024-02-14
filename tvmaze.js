@@ -3,6 +3,7 @@
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
+const DEFAULT_IMG = 'https://tinyurl.com/tv-missing';
 
 
 /** Given a search term, search for tv shows that match that query.
@@ -13,20 +14,27 @@ const $searchForm = $("#searchForm");
  */
 
 async function getShowsByTerm(searchTerm) {
-
   let query = new URLSearchParams({ q: searchTerm });
   let response = await fetch(`https://api.tvmaze.com/search/shows?${query}`);
   let rawShowData = await response.json();
-  console.log("rawDAta", rawShowData);
   let formattedShowData = [];
 
+
+
+  //Loops through rawShowData to create individual formated show objects.
   for (let data of rawShowData) {
     let newShow = {
       id: data.show.id,
       name: data.show.name,
       summary: data.show.summary,
-      image: data.show.image.medium
     };
+    //If there is now show image, default image is added.
+    if (data.show.image === null) {
+      newShow.image = DEFAULT_IMG;
+    } else {
+      newShow.image = data.show.image.medium;
+    }
+
     formattedShowData.push(newShow);
   }
 
@@ -47,7 +55,7 @@ function displayShows(shows) {
         <div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
-              src="http://static.tvmaze.com/uploads/images/medium_portrait/160/401704.jpg"
+              src="${show.image}"
               alt="Bletchly Circle San Francisco"
               class="w-25 me-3">
            <div class="media-body">
