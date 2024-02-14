@@ -20,12 +20,12 @@ async function getShowsByTerm(searchTerm) {
   const rawShowData = await response.json();
 
   // Transforms each element of rawShowData to be formatted correctly
-  return rawShowData.map(data => {
+  return rawShowData.map(showData => {
     return {
-      id: data.show.id,
-      name: data.show.name,
-      summary: data.show.summary,
-      image: (data.show.image) ? data.show.image.medium : DEFAULT_IMG
+      id: showData.show.id,
+      name: showData.show.name,
+      summary: showData.show.summary,
+      image: (showData.show.image) ? showData.show.image.medium : DEFAULT_IMG
     };
   });
 }
@@ -90,12 +90,13 @@ async function getEpisodesOfShow(id) {
   const rawEpisodeData = await response.json();
 
   // Transforms each element of rawEpisodeData to be formatted correctly
-  return rawEpisodeData.map(data => {
+  // TODO: variable name data could be improved
+  return rawEpisodeData.map(episode => {
     return {
-      id: data.id,
-      name: data.name,
-      season: data.season,
-      number: data.number
+      id: episode.id,
+      name: episode.name,
+      season: episode.season,
+      number: episode.number
     };
   });
 
@@ -109,7 +110,10 @@ async function getEpisodesOfShow(id) {
 function displayEpisodes(episodes) {
   $epidsodelist.empty();
   for (let episode of episodes) {
-    const $episode = $(`<li>${episode.name}, (season ${episode.season}, number ${episode.number})</li>}`);
+    const $episode = $(`
+      <li>${episode.name}, (season ${episode.season},
+        number ${episode.number})</li>}
+    `);
     $epidsodelist.append($episode);
   }
 }
@@ -118,9 +122,8 @@ function displayEpisodes(episodes) {
 /** Takes in show ID and
  * shows episodes area, gets episodes from API, and displays.
  */
-
-async function getEpisodesAndDisplay(showID) {
-  const episodes = await getEpisodesOfShow(showID);
+async function getEpisodesAndDisplay(showId) {
+  const episodes = await getEpisodesOfShow(showId);
   $episodesArea.show();
   displayEpisodes(episodes);
 }
