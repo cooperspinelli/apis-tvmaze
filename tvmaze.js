@@ -4,7 +4,7 @@ const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
 const DEFAULT_IMG = 'https://tinyurl.com/tv-missing';
-
+const API_URL = "https://api.tvmaze.com/search/shows?";
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -14,31 +14,19 @@ const DEFAULT_IMG = 'https://tinyurl.com/tv-missing';
  */
 
 async function getShowsByTerm(searchTerm) {
-  let query = new URLSearchParams({ q: searchTerm });
-  let response = await fetch(`https://api.tvmaze.com/search/shows?${query}`);
-  let rawShowData = await response.json();
-  let formattedShowData = [];
+  const qs = new URLSearchParams({ q: searchTerm });
+  const response = await fetch(`${API_URL}${qs}`);
+  const rawShowData = await response.json();
 
-
-
-  //Loops through rawShowData to create individual formated show objects.
-  for (let data of rawShowData) {
-    let newShow = {
+  // Transforms each element of rawShowData to be formatted correctly
+  return rawShowData.map(data => {
+    return {
       id: data.show.id,
       name: data.show.name,
       summary: data.show.summary,
+      image: (data.show.image) ? data.show.image.medium : DEFAULT_IMG
     };
-    //If there is now show image, default image is added.
-    if (data.show.image === null) {
-      newShow.image = DEFAULT_IMG;
-    } else {
-      newShow.image = data.show.image.medium;
-    }
-
-    formattedShowData.push(newShow);
-  }
-
-  return formattedShowData;
+  });
 }
 
 
